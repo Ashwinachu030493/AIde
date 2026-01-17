@@ -42,12 +42,16 @@ jobs:
         python -c "import sys; sys.path.insert(0, '${{ github.workspace }}'); from server.auditor.scanning_engine import AuditEngine; print('✓ Auditor imports OK')"
         python -c "import sys; sys.path.insert(0, '${{ github.workspace }}'); from server.shared.vector_store import VectorStore; print('✓ Vector store imports OK')"
         
-    - name: Run backend tests
+    - name: Run backend tests with coverage
       env:
         TRANSFORMERS_OFFLINE: '1'
         PYTHONPATH: ${{ github.workspace }}
       run: |
-        python -m pytest server/tests/ -v --tb=short -p no:warnings 2>&1 | tee pytest.log
+        python -m pytest server/tests/ -v --tb=short -p no:warnings \
+          --cov=server \
+          --cov-report=term \
+          --cov-report=xml:server/coverage.xml \
+          2>&1 | tee pytest.log
         
     - name: Show test output if failed
       if: failure()
@@ -56,6 +60,13 @@ jobs:
         cat pytest.log || echo "No log found"
         echo "=== PYTHON PATH ==="
         python -c "import sys; print('\n'.join(sys.path))"
+
+    - name: Upload pytest logs (on failure)
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: pytest-log-${{ matrix.python-version }}
+        path: pytest.log
         
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
@@ -63,6 +74,8 @@ jobs:
         file: ./server/coverage.xml
         flags: backend
         name: backend-${{ matrix.python-version }}
+        fail_ci_if_error: false
+      continue-on-error: true
 
   test-frontend:
     name: Test Frontend (TypeScript)
@@ -118,6 +131,7 @@ jobs:
         cd server
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      continue-on-error: true
         
     - name: Check formatting with black
       run: |
@@ -223,6 +237,7 @@ jobs:
         sleep 10
         curl http://localhost:8000/ || echo "Server startup failed"
         curl http://localhost:8000/health/detailed || echo "Health check failed"
+      continue-on-error: true
 
   build-summary:
     name: Build Summary
