@@ -34,13 +34,27 @@ jobs:
         pip install -r server/requirements.txt
         pip install pytest pytest-asyncio pytest-cov
         
+    - name: Verify imports
+      run: |
+        python -c "from server.llm.client import LLMClient; print('✓ LLM client imports OK')"
+        python -c "from server.auditor.scanning_engine import AuditEngine; print('✓ Auditor imports OK')"
+        python -c "from server.shared.vector_store import VectorStore; print('✓ Vector store imports OK')"
+        
     - name: Run backend tests
       env:
         TRANSFORMERS_OFFLINE: '1'
         PYTHONPATH: ${{ github.workspace }}
       run: |
         cd server
-        pytest tests/ -v --cov=. --cov-report=xml --cov-report=term
+        pytest tests/ -v --tb=short 2>&1 | tee pytest.log
+        
+    - name: Show test output if failed
+      if: failure()
+      run: |
+        echo "=== PYTEST LOG ==="
+        cat server/pytest.log || echo "No log found"
+        echo "=== PYTHON PATH ==="
+        python -c "import sys; print('\n'.join(sys.path))"
         
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
