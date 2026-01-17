@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # PostgreSQL with pgvector extension
+  postgres:
+    image: pgvector/pgvector:pg15
+    container_name: aide-postgres
+    environment:
+      POSTGRES_USER: aide
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-aide_dev_secret}
+      POSTGRES_DB: aide
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aide"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ChromaDB for vector storage
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: aide-chromadb
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma_data
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma_data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Redis for caching and rate limiting
+  redis:
+    image: redis:7-alpine
+    container_name: aide-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+volumes:
+  postgres_data:
+  chroma_data:
+  redis_data:

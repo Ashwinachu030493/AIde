@@ -1,0 +1,23 @@
+.settings-panel {
+    color: var(--vscode-foreground);
+    font-family: var(--vscode-font-family);
+}
+
+.vs-input,
+.vs-select {
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+}
+
+.vs-input:focus,
+.vs-select:focus {
+    outline: 1px solid var(--vscode-focusBorder);
+    border-color: var(--vscode-focusBorder);
+}
+
+h2,
+h3 {
+    border-bottom: 1px solid var(--vscode-panel-border);
+    padding-bottom: 0.5rem;
+}
