@@ -7,10 +7,8 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy.orm import Session
 
 from server.auditor.rules import AuditRule, Severity
-
-# Import engine and types
 from server.auditor.scanning_engine import AuditEngine
-from server.models.audit import AuditViolation  # Pydantic model
+from server.models.audit import AuditViolation
 
 logger = logging.getLogger(__name__)
 
