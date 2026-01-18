@@ -1,20 +1,20 @@
-
 """
 SQLite migration for LLM usage tracking
 """
 
-import sqlite3
 import os
+import sqlite3
+
 
 def create_llm_usage_tables():
-    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'aide.db')
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "aide.db")
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    
+
     print(f"Migrating database at: {db_path}")
 
     # Table: llm_usage_logs
-    cursor.execute('''
+    cursor.execute("""
     CREATE TABLE IF NOT EXISTS llm_usage_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         provider TEXT NOT NULL,              -- openai, anthropic, groq
@@ -29,10 +29,10 @@ def create_llm_usage_tables():
         error_message TEXT,
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
-    ''')
-    
+    """)
+
     # Table: file_index_status
-    cursor.execute('''
+    cursor.execute("""
     CREATE TABLE IF NOT EXISTS file_index_status (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         project_id TEXT NOT NULL,
@@ -44,18 +44,25 @@ def create_llm_usage_tables():
         error_message TEXT,
         UNIQUE(project_id, file_path)
     )
-    ''')
-    
+    """)
+
     # Indexes
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_llm_usage_timestamp ON llm_usage_logs(timestamp)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_llm_usage_project ON llm_usage_logs(project_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_file_status_project ON file_index_status(project_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_file_status_path ON file_index_status(file_path)')
-    
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_llm_usage_timestamp ON llm_usage_logs(timestamp)"
+    )
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_llm_usage_project ON llm_usage_logs(project_id)")
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_file_status_project ON file_index_status(project_id)"
+    )
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_file_status_path ON file_index_status(file_path)"
+    )
+
     conn.commit()
     conn.close()
-    
+
     print("✅ LLM usage and file status tables created")
+
 
 if __name__ == "__main__":
     create_llm_usage_tables()

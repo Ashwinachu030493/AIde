@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List
 
 from server.auditor.rules import ALL_RULES, AuditRule
-from server.models.audit import AuditViolation, AuditResult
+from server.models.audit import AuditResult, AuditViolation
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class AuditEngine:
     def scan_file(self, content: str, file_path: str, language: str = None) -> AuditResult:
         violations = []
 
-        lines = content.split('\n')
+        lines = content.split("\n")
 
         for rule in self.rules:
             # Only apply language-specific rules when language is known

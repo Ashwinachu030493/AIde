@@ -1,11 +1,14 @@
-from pydantic import BaseModel
-from typing import List, Optional
 from enum import Enum
+from typing import List, Optional
+
+from pydantic import BaseModel
+
 
 class Severity(str, Enum):
     INFO = "info"
     WARNING = "warning"
     CRITICAL = "critical"
+
 
 class AuditViolation(BaseModel):
     rule_id: str
@@ -15,13 +18,15 @@ class AuditViolation(BaseModel):
     file_path: str
     line_number: int
     line_content: str
-    
+
+
 class AuditResult(BaseModel):
     file_path: str
     scan_timestamp: str
     violations: List[AuditViolation]
     error: Optional[str] = None
-    
+
+
 class ProjectAuditSummary(BaseModel):
     total_files: int
     files_with_issues: int

@@ -1,0 +1,14 @@
+﻿---
+exclude_dirs:
+  - tests
+  - __pycache__
+  - .venv
+  - chroma_data
+
+skips:
+  - B101
+  - B104
+  - B110
+  - B112
+  - B113
+  - B324

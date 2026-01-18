@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+
 from sqlalchemy import text
 
 # Add project root to path (one level up)
@@ -7,6 +8,7 @@ sys.path.append(os.path.dirname(os.getcwd()))
 
 from server.shared.database import engine, init_db
 from server.shared.vector_store import VectorStore
+
 
 def test_db():
     print("Testing SQLite Database...")
@@ -20,6 +22,7 @@ def test_db():
         print(f"❌ Database error: {e}")
         raise
 
+
 def test_vector_store():
     print("Testing Local ChromaDB...")
     try:
@@ -32,6 +35,7 @@ def test_vector_store():
     except Exception as e:
         print(f"❌ Vector Store error: {e}")
         raise
+
 
 if __name__ == "__main__":
     test_db()

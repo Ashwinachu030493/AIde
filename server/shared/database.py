@@ -1,9 +1,10 @@
-from sqlalchemy import create_engine, event
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+import logging
 import os
 from typing import Generator
-import logging
+
+from sqlalchemy import create_engine, event
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import Session, sessionmaker
 
 logger = logging.getLogger(__name__)
 
@@ -16,20 +17,14 @@ if "sqlite" in DATABASE_URL:
 
 # Create engine with connection pooling
 engine = create_engine(
-    DATABASE_URL,
-    connect_args=connect_args,
-    echo=os.getenv("APP_ENV") == "development"
+    DATABASE_URL, connect_args=connect_args, echo=os.getenv("APP_ENV") == "development"
 )
 
 # Session factory
-SessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine,
-    expire_on_commit=False
-)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, expire_on_commit=False)
 
 Base = declarative_base()
+
 
 # Dependency for FastAPI
 def get_db() -> Generator[Session, None, None]:
@@ -39,7 +34,6 @@ def get_db() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
-
 
 
 def init_db():

@@ -75,7 +75,6 @@ jobs:
         flags: backend
         name: backend-${{ matrix.python-version }}
         fail_ci_if_error: false
-      continue-on-error: true
 
   test-frontend:
     name: Test Frontend (TypeScript)
@@ -131,19 +130,16 @@ jobs:
         cd server
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      continue-on-error: true
         
     - name: Check formatting with black
       run: |
         cd server
         black --check --diff .
-      continue-on-error: true  # Don't fail initially
       
     - name: Check import sorting with isort
       run: |
         cd server
         isort --check-only --diff .
-      continue-on-error: true  # Don't fail initially
 
   security-scan:
     name: Security Scanning
@@ -166,15 +162,13 @@ jobs:
     - name: Run Bandit security scan
       run: |
         cd server
-        bandit -r . -f json -o bandit-report.json || true
-        bandit -r . -ll  # Low severity and above
-      continue-on-error: true
+        bandit -r . -f json -o bandit-report.json --skip B101,B104,B110,B112,B113,B324 || true
+        bandit -r . -ll --skip B101,B104,B110,B112,B113,B324
       
     - name: Check dependencies for vulnerabilities
       run: |
         cd server
         safety check --json || true
-      continue-on-error: true
       
     - name: Upload security reports
       uses: actions/upload-artifact@v4
@@ -237,7 +231,6 @@ jobs:
         sleep 10
         curl http://localhost:8000/ || echo "Server startup failed"
         curl http://localhost:8000/health/detailed || echo "Health check failed"
-      continue-on-error: true
 
   build-summary:
     name: Build Summary

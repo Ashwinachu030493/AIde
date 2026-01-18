@@ -1,6 +1,6 @@
-from typing import List
 import re
 from enum import Enum
+from typing import List
 
 
 class Severity(Enum):
@@ -10,7 +10,15 @@ class Severity(Enum):
 
 
 class AuditRule:
-    def __init__(self, id: str, name: str, description: str, severity: Severity, pattern: str = None, languages: List[str] = None):
+    def __init__(
+        self,
+        id: str,
+        name: str,
+        description: str,
+        severity: Severity,
+        pattern: str = None,
+        languages: List[str] = None,
+    ):
         self.id = id
         self.name = name
         self.description = description
