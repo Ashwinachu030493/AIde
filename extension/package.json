@@ -2,7 +2,7 @@
   "name": "aide-vscode",
   "displayName": "AIde - AI Coding Assistant",
   "description": "AI-powered coding assistant with chat, code auditing, and project analytics",
-  "version": "1.0.6",
+  "version": "0.3.0",
   "publisher": "aide-dev",
   "repository": {
     "type": "git",
