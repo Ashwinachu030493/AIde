@@ -134,12 +134,12 @@ jobs:
     - name: Check formatting with black
       run: |
         cd server
-        black --check --diff .
+        black --check --diff . --line-length=100
       
     - name: Check import sorting with isort
       run: |
         cd server
-        isort --check-only --diff .
+        isort --check-only --diff . --profile black
 
   security-scan:
     name: Security Scanning
